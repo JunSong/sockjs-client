@@ -1,12 +1,12 @@
 module('End to End')
 
-factory_body_check = (protocol) ->
-    if not SockJS[protocol] or not SockJS[protocol].enabled(client_opts.sockjs_opts)
-        n = " " + protocol + " [unsupported by client]"
+factory_body_check = (transport) ->
+    if not SockJS[transport] or not SockJS[transport].enabled(client_opts.sockjs_opts)
+        n = " " + transport + " [unsupported by client]"
         test n, ->
-            log('Unsupported protocol (by client): "' + protocol + '"')
+            log('Unsupported transport (by client): "' + transport + '"')
     else
-        asyncTest protocol, ->
+        asyncTest transport, ->
             expect(5)
             url = client_opts.url + '/echo'
 
@@ -14,7 +14,7 @@ factory_body_check = (protocol) ->
             hook.test_body(!!document.body, typeof document.body);
 
             var sock = new SockJS('""" + url + """', null,
-                                  {protocols_whitelist:['""" + protocol + """']});
+                                  {transports_whitelist:['""" + transport + """']});
             sock.onopen = function() {
                 var m = hook.onopen();
                 sock.send(m);
@@ -42,12 +42,12 @@ factory_body_check = (protocol) ->
                 start()
 
 # module('sockjs in head')
-# body_protocols = ['iframe-eventsource',
+# body_transports = ['iframe-eventsource',
 #             'iframe-htmlfile',
 #             'iframe-xhr-polling',
 #             'jsonp-polling']
-# for protocol in body_protocols
-#     factory_body_check(protocol)
+# for transport in body_transports
+#     factory_body_check(transport)
 
 
 module('connection errors')
